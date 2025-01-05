@@ -1469,7 +1469,7 @@ footer {
 }
 
 .regions-table {
-    display: none; /* Initial state */
+    display: none; /* Initially hidden */
     position: fixed;
     top: 0;
     left: 0;
@@ -1490,17 +1490,16 @@ footer {
     border-radius: 12px;
     width: 90%;
     max-width: 600px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .regions-content h3 {
     font-family: "Guardian-EgypTT", serif;
     text-align: left;
-    text-decoration: none;
     font-size: 32px;
     font-weight: 200;
     line-height: 36px;
     color: #222222;
-    padding: 0 18px;
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
@@ -1525,7 +1524,6 @@ footer {
     color: #222;
 }
 
-
 #close-btn {
     font-size: 14px;
     padding: 8px 16px;
@@ -1539,6 +1537,7 @@ footer {
 #close-btn:hover {
     background-color: #444;
 }
+
 
 @media (max-width: 480px) {
     .regions-grid {
