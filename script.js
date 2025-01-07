@@ -7,18 +7,48 @@ function debounce(func, delay) {
     };
 }
 
+// Component Loading
+async function includeHTML(selector, file) {
+    const element = document.querySelector(selector);
+    if (element) {
+        try {
+            const response = await fetch(file);
+            if (response.ok) {
+                element.innerHTML = await response.text();
+                // Initialize header-specific features after loading
+                if (selector === 'header') {
+                    initializeHeaderEffects();
+                    initializeSearch();
+                    initializeMobileMenu();
+                    initializeCategories();
+                }
+            } else {
+                console.error(`Error loading ${file}: ${response.statusText}`);
+            }
+        } catch (error) {
+            console.error(`Failed to load ${file}:`, error);
+        }
+    }
+}
+
 // Main Initialization
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+    // First load shared components
+    await Promise.all([
+        includeHTML("header", "header.html"),
+        includeHTML("footer", "footer.html")
+    ]);
+
+    // Then initialize page-specific features
     initializeAccordion();
-    initializeSearch();
     initializeProductCards();
     initializeCarousel();
     initializeNewsletter();
-    initializeCategories();
     initializeLazyLoading();
-    initializeMobileMenu();
-    initializeHeaderEffects();
     initializeRegionsTable();
+
+    // Ensure buttons navigate to their assigned links
+    initializeNavigationButtons();
 });
 
 // Accordion Functionality
@@ -121,7 +151,7 @@ function initializeNewsletter() {
     });
 }
 
-//Categories
+// Categories
 function initializeCategories() {
     const dropdownBtn = document.querySelector('.categories-btn');
     const dropdownMenu = document.querySelector('.dropdown-menu');
@@ -144,6 +174,11 @@ function initializeCategories() {
     parentItems.forEach((item) => {
         const submenu = item.querySelector('.submenu');
         item.addEventListener('click', function (e) {
+            // Allow navigation for anchor tags
+            if (e.target.tagName === 'A') {
+                return;
+            }
+
             e.preventDefault();
             e.stopPropagation();
 
@@ -250,4 +285,27 @@ function initializeRegionsTable() {
             }
         });
     }
+}
+
+// Smooth Scroll to Sections
+document.addEventListener('DOMContentLoaded', function () {
+    const hash = window.location.hash;
+    if (hash) {
+        const targetSection = document.querySelector(hash);
+        if (targetSection) {
+            targetSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+});
+
+// Ensure buttons navigate to their assigned links
+function initializeNavigationButtons() {
+    const navButtons = document.querySelectorAll('.categories-nav .nav-btn');
+    navButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault(); // Prevent default behavior
+            const targetLink = button.getAttribute('onclick').match(/'([^']+)'/)[1]; // Extract the link from the onclick attribute
+            window.location.href = targetLink; // Navigate to the target link
+        });
+    });
 }
